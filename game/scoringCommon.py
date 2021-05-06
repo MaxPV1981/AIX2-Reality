@@ -317,6 +317,10 @@ def onPlayerSpawn(player, soldier):
 	global g_vehicle_bonus
 	if "boat_rib_hmg_m3" in g_vehicle_bonus:
 		player.hasreadinstruction = True
+	if not player.isAIPlayer() and getattr(player, 'offended', False):
+		side = player.getTeam()
+		player.setTeam(3 - side)
+		setattr(player, 'offended', False)
 
 
 def vehicle_type(name):
@@ -482,7 +486,16 @@ def onPlayerKilled(victim, attacker, weapon, assists, object):
 			killer_dict = dict()
 		if not victim_dict:
 			victim_dict = dict()
-		overall = victim_dict.get('overall', 0)
+		overall = killer_dict.get('overall', 0)
+
+		decision = 0
+		for key in victim_dict:
+			if victim_dict.get(key, 0) > 0:
+			decision += victim_dict.get(key, 0)
+		
+		if decision >= 80:
+			setattr(victim, 'offended', True)
+
 		message = None
 		vehicle = victim.getVehicle()
 		victimVehicle = bf2.objectManager.getRootParent(vehicle)
@@ -532,7 +545,7 @@ def onPlayerKilled(victim, attacker, weapon, assists, object):
 				overall = overall + score
 				if overall < 0: 
 					overall = 0
-				victim_dict.update({'overall' : overall})
+				killer_dict.update({'overall' : overall})
 				addScore(attacker, 2, RPL)
 #				return
 			
