@@ -2,6 +2,8 @@
 # Original script from AIX team
 # Rework by MaxP
 
+# Working version
+
 TAKEOVERTYPE_CAPTURE = 1
 TAKEOVERTYPE_NEUTRALIZE = 2
 
